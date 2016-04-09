@@ -15,10 +15,13 @@ import de.robingrether.idisguise.api.DisguiseAPI;
 
 public class MobAbilities extends JavaPlugin {
 	
-	private Map<Player, Abilities> playerAbilities = new ConcurrentHashMap<Player, Abilities>();
-	private DisguiseAPI disguiseApi;
+	Map<Player, Abilities> playerAbilities = new ConcurrentHashMap<Player, Abilities>();
+	EventListener listener;
+	DisguiseAPI disguiseApi;
 	
 	public void onEnable() {
+		listener = new EventListener(this);
+		getServer().getPluginManager().registerEvents(listener, this);
 		disguiseApi = getServer().getServicesManager().getRegistration(DisguiseAPI.class).getProvider();
 		getLogger().log(Level.INFO, "Linked with iDisguise.");
 		getLogger().log(Level.INFO, String.format("%s enabled!", getFullName()));
