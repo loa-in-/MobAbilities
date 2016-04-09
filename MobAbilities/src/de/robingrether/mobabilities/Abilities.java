@@ -15,11 +15,15 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import de.robingrether.idisguise.disguise.DisguiseType;
+
 public abstract class Abilities {
 	
 	public boolean allowTargetByEntity(EntityType entityType) { return true; }
 	
 	public void applyPotionEffects(Player player) {}
+	
+	public abstract DisguiseType getDisguiseType();
 	
 	public void handleBowShoot(Player player, ItemStack bow) {}
 	
@@ -45,6 +49,10 @@ public abstract class Abilities {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 		}
 		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.BLAZE;
+		}
+		
 		public void handleRightClick(Player player) {
 			player.launchProjectile(SmallFireball.class);
 		}
@@ -56,6 +64,10 @@ public abstract class Abilities {
 	};
 	
 	public static final Abilities CHICKEN = new Abilities() {
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.CHICKEN;
+		}
 		
 		public double handleDamage(Player player, double damage, DamageCause cause) {
 			if(cause.equals(DamageCause.FALL)) {
@@ -76,6 +88,10 @@ public abstract class Abilities {
 			return !entityType.equals(EntityType.CREEPER);
 		}
 		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.CREEPER;
+		}
+		
 		public void handleRightClick(Player player) {
 			if(player.isSneaking() && player.getLocation().getPitch() == 90.0F) {
 				player.getWorld().createExplosion(player.getLocation(), 1.0F);
@@ -88,6 +104,10 @@ public abstract class Abilities {
 		
 		public boolean allowTargetByEntity(EntityType entityType) {
 			return !entityType.equals(EntityType.ENDERMAN);
+		}
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.ENDERMAN;
 		}
 		
 		public void handleTeleport(Player player, TeleportCause cause) {
@@ -110,6 +130,10 @@ public abstract class Abilities {
 			player.setAllowFlight(true);
 		}
 		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.GHAST;
+		}
+		
 		public void handleRightClick(Player player) {
 			player.launchProjectile(LargeFireball.class);
 		}
@@ -126,6 +150,10 @@ public abstract class Abilities {
 		public void applyPotionEffects(Player player) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 3));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
+		}
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.HORSE;
 		}
 		
 		public void handleRightClickedByPlayer(Player player, Player other) {
@@ -149,6 +177,10 @@ public abstract class Abilities {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 		}
 		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.PIG_ZOMBIE;
+		}
+		
 		public void removePotionEffects(Player player) {
 			player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
 		}
@@ -156,6 +188,10 @@ public abstract class Abilities {
 	};
 	
 	public static final Abilities SKELETON = new Abilities() {
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.SKELETON;
+		}
 		
 		public void handleBowShoot(Player player, ItemStack bow) {
 			if(!bow.containsEnchantment(Enchantment.ARROW_INFINITE)) {
@@ -172,6 +208,10 @@ public abstract class Abilities {
 	
 	public static final Abilities SPIDER = new Abilities() {
 		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.SPIDER;
+		}
+		
 		public Vector handleMove(Player player, Vector movement) {
 			Block block = player.getLocation().getBlock();
 			if(!block.getRelative(BlockFace.EAST).isEmpty() || !block.getRelative(BlockFace.NORTH).isEmpty() || !block.getRelative(BlockFace.SOUTH).isEmpty() || !block.getRelative(BlockFace.WEST).isEmpty()) {
@@ -187,6 +227,10 @@ public abstract class Abilities {
 		public void applyPotionEffects(Player player) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 1));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
+		}
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.SQUID;
 		}
 		
 		public void removePotionEffects(Player player) {
