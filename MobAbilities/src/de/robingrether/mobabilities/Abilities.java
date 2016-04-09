@@ -112,11 +112,11 @@ public abstract class Abilities {
 		
 		public void handleTeleport(Player player, TeleportCause cause) {
 			if(cause.equals(TeleportCause.ENDER_PEARL)) {
-				ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ENDER_PEARL));
-				if(itemStack == null) {
-					player.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
-				} else {
+				if(player.getInventory().contains(Material.ENDER_PEARL)) {
+					ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ENDER_PEARL));
 					itemStack.setAmount(itemStack.getAmount() + 1);
+				} else {
+					player.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
 				}
 				player.updateInventory();
 			}
@@ -196,11 +196,11 @@ public abstract class Abilities {
 		
 		public void handleBowShoot(Player player, ItemStack bow) {
 			if(!bow.containsEnchantment(Enchantment.ARROW_INFINITE)) {
-				ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ARROW));
-				if(itemStack == null) {
-					player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-				} else {
+				if(player.getInventory().contains(Material.ARROW)) {
+					ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ARROW));
 					itemStack.setAmount(itemStack.getAmount() + 1);
+				} else {
+					player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
 				}
 				player.updateInventory();
 			}
