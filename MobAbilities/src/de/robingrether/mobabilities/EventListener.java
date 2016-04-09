@@ -1,5 +1,6 @@
 package de.robingrether.mobabilities;
 
+import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,7 +68,10 @@ public class EventListener implements Listener {
 		if(!event.isCancelled()) {
 			Player player = event.getPlayer();
 			if(plugin.playerAbilities.containsKey(player)) {
-				event.setTo(event.getFrom().add(plugin.playerAbilities.get(player).handleMove(player, event.getTo().toVector().subtract(event.getFrom().toVector()))));
+				Location to = event.getFrom().add(plugin.playerAbilities.get(player).handleMove(player, event.getTo().toVector().subtract(event.getFrom().toVector())));
+				to.setYaw(event.getTo().getYaw());
+				to.setPitch(event.getTo().getPitch());
+				event.setTo(to);
 			}
 		}
 	}
