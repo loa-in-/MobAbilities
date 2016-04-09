@@ -118,6 +118,7 @@ public abstract class Abilities {
 				} else {
 					itemStack.setAmount(itemStack.getAmount() + 1);
 				}
+				player.updateInventory();
 			}
 		}
 		
@@ -201,6 +202,7 @@ public abstract class Abilities {
 				} else {
 					itemStack.setAmount(itemStack.getAmount() + 1);
 				}
+				player.updateInventory();
 			}
 		}
 		
