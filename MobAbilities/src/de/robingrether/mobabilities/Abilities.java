@@ -127,6 +127,7 @@ public abstract class Abilities {
 		public void applyPotionEffects(Player player) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
 			player.setAllowFlight(true);
+			player.setFlying(true);
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -134,11 +135,14 @@ public abstract class Abilities {
 		}
 		
 		public void handleRightClick(Player player, ItemStack item) {
-			player.launchProjectile(LargeFireball.class);
+			if(item != null && item.getType().equals(Material.STICK)) {
+				player.launchProjectile(LargeFireball.class);
+			}
 		}
 		
 		public void removePotionEffects(Player player) {
 			player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+			player.setFlying(false);
 			player.setAllowFlight(false);
 		}
 		
