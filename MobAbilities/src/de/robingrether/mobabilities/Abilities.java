@@ -52,6 +52,8 @@ public abstract class Abilities {
 	
 	public boolean allowTargetByEntity(EntityType entityType) { return true; }
 	
+	public void apply(Player player) { applyPotionEffects(player); }
+	
 	public void applyPotionEffects(Player player) {}
 	
 	public abstract DisguiseType getDisguiseType();
@@ -71,6 +73,8 @@ public abstract class Abilities {
 	public void handleTeleport(Player player, TeleportCause cause) {}
 	
 	public final Abilities register(String name) { fromName.put(this.name = name, this); return this; }
+	
+	public void remove(Player player) { removePotionEffects(player); }
 	
 	public void removePotionEffects(Player player) {}
 	
@@ -160,10 +164,14 @@ public abstract class Abilities {
 	
 	public static final Abilities GHAST = new Abilities() {
 		
-		public void applyPotionEffects(Player player) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
+		public void apply(Player player) {
 			player.setAllowFlight(true);
 			player.setFlying(true);
+			applyPotionEffects(player);
+		}
+		
+		public void applyPotionEffects(Player player) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -176,10 +184,14 @@ public abstract class Abilities {
 			}
 		}
 		
-		public void removePotionEffects(Player player) {
-			player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+		public void remove(Player player) {
 			player.setFlying(false);
 			player.setAllowFlight(false);
+			removePotionEffects(player);
+		}
+		
+		public void removePotionEffects(Player player) {
+			player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
 		}
 		
 	}.register("ghast");
@@ -197,6 +209,13 @@ public abstract class Abilities {
 		
 		public void handleRightClickedByPlayer(Player player, Player other) {
 			player.setPassenger(other);
+		}
+		
+		public void remove(Player player) {
+			if(player.getPassenger() instanceof Player) {
+				player.getPassenger().eject();
+			}
+			removePotionEffects(player);
 		}
 		
 		public void removePotionEffects(Player player) {
@@ -306,6 +325,9 @@ public abstract class Abilities {
 			}
 			
 			public void run() {
+				if(player == null) {
+					return;
+				}
 				if(!player.getLocation().getBlock().equals(block)) {
 					player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
 				} else {

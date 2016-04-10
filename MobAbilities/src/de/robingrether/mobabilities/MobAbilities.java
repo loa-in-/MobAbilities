@@ -25,13 +25,23 @@ public class MobAbilities extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(listener, this);
 		disguiseApi = getServer().getServicesManager().getRegistration(DisguiseAPI.class).getProvider();
 		getLogger().log(Level.INFO, "Linked with iDisguise.");
+		getServer().getScheduler().runTaskTimer(this, new Runnable() {
+			
+			public void run() {
+				for(Player player : playerAbilities.keySet()) {
+					playerAbilities.get(player).applyPotionEffects(player);
+				}
+			}
+			
+		}, 600L, 600L);
 		getLogger().log(Level.INFO, String.format("%s enabled!", getFullName()));
 	}
 	
 	public void onDisable() {
+		getServer().getScheduler().cancelTasks(this);
 		for(Player player : playerAbilities.keySet()) {
 			disguiseApi.undisguise(player, false);
-			playerAbilities.get(player).removePotionEffects(player);
+			playerAbilities.get(player).remove(player);
 			player.sendMessage(ChatColor.GOLD + "Removed your abilities.");
 		}
 		playerAbilities.clear();
@@ -70,7 +80,7 @@ public class MobAbilities extends JavaPlugin {
 				} else {
 					playerAbilities.remove(player);
 					disguiseApi.undisguise(player, false);
-					oldAbilities.removePotionEffects(player);
+					oldAbilities.remove(player);
 					sender.sendMessage(ChatColor.GOLD + "Removed your abilities.");
 				}
 			} else {
@@ -80,10 +90,10 @@ public class MobAbilities extends JavaPlugin {
 					if(oldAbilities != null) {
 						playerAbilities.remove(player);
 						disguiseApi.undisguise(player, false);
-						oldAbilities.removePotionEffects(player);
+						oldAbilities.remove(player);
 					}
 					disguiseApi.disguise(player, newAbilities.getDisguiseType().newInstance(), false);
-					newAbilities.applyPotionEffects(player);
+					newAbilities.apply(player);
 					playerAbilities.put(player, newAbilities);
 					sender.sendMessage(ChatColor.GOLD + "Applied new abilities.");
 				}
