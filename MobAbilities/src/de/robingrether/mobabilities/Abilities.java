@@ -1,5 +1,6 @@
 package de.robingrether.mobabilities;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -211,12 +212,67 @@ public abstract class Abilities {
 			return DisguiseType.SPIDER;
 		}
 		
-		public Vector handleMove(Player player, Vector movement) {
+		public Vector handleMove(Player player, Vector movement) {	
 			Block block = player.getLocation().getBlock();
-			if(!block.getRelative(BlockFace.EAST).isEmpty() || !block.getRelative(BlockFace.NORTH).isEmpty() || !block.getRelative(BlockFace.SOUTH).isEmpty() || !block.getRelative(BlockFace.WEST).isEmpty()) {
-				player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0);
+			if(block.isEmpty()) {
+				Block blockDown = block.getRelative(BlockFace.DOWN);
+				Block blockUp = block.getRelative(BlockFace.UP);
+				boolean sentUpdate = false;
+				if(blockDown.isEmpty()) {
+					if(block.getRelative(BlockFace.NORTH).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0001);
+						sentUpdate = true;
+					} else if(block.getRelative(BlockFace.EAST).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0010);
+						sentUpdate = true;
+					} else if(block.getRelative(BlockFace.SOUTH).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0100);
+						sentUpdate = true;
+					} else if(block.getRelative(BlockFace.WEST).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b1000);
+						sentUpdate = true;
+					}
+				} else if(blockUp.isEmpty()) {
+					if(block.getRelative(BlockFace.NORTH).getType().isSolid() && blockUp.getRelative(BlockFace.NORTH).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0001);
+						sentUpdate = true;
+					} else if(block.getRelative(BlockFace.EAST).getType().isSolid() && blockUp.getRelative(BlockFace.EAST).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0010);
+						sentUpdate = true;
+					} else if(block.getRelative(BlockFace.SOUTH).getType().isSolid() && blockUp.getRelative(BlockFace.SOUTH).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0100);
+						sentUpdate = true;
+					} else if(block.getRelative(BlockFace.WEST).getType().isSolid() && blockUp.getRelative(BlockFace.WEST).getType().isSolid()) {
+						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b1000);
+						sentUpdate = true;
+					}
+				}
+				if(sentUpdate) {
+					player.setFallDistance(0.0F);
+					Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new BlockUpdate(player, block), 20L);
+				}
 			}
 			return movement;
+		}
+		
+		class BlockUpdate implements Runnable {
+			
+			private Player player;
+			private Block block;
+			
+			private BlockUpdate(Player player, Block block) {
+				this.player = player;
+				this.block = block;
+			}
+			
+			public void run() {
+				if(!player.getLocation().getBlock().equals(block)) {
+					player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
+				} else {
+					Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new BlockUpdate(player, block), 20L);
+				}
+			}
+			
 		}
 		
 	};
