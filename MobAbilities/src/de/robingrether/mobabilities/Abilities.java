@@ -69,15 +69,12 @@ public abstract class Abilities {
 			return DisguiseType.CHICKEN;
 		}
 		
-		public double handleDamage(Player player, double damage, DamageCause cause) {
-			if(cause.equals(DamageCause.FALL)) {
-				return 0.0;
-			}
-			return damage;
-		}
-		
 		public Vector handleMove(Player player, Vector movement) {
-			return movement.setY(movement.getY() * 0.1);
+			if(movement.getY() < 0) {
+				player.setVelocity(player.getVelocity().multiply(new Vector(1.0, 0.5, 1.0)));
+				player.setFallDistance(0.0F);
+			}
+			return movement;
 		}
 		
 	};
