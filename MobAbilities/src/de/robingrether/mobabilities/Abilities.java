@@ -64,7 +64,7 @@ public abstract class Abilities {
 	
 	public Vector handleMove(Player player, Vector movement) { return movement; }
 	
-	public void handleRightClick(Player player, ItemStack item) {}
+	public void handleInteract(Player player, ItemStack item) {}
 	
 	public void handleRightClickedByPlayer(Player player, Player other) {}
 	
@@ -88,7 +88,7 @@ public abstract class Abilities {
 			return DisguiseType.BLAZE;
 		}
 		
-		public void handleRightClick(Player player, ItemStack item) {
+		public void handleInteract(Player player, ItemStack item) {
 			player.launchProjectile(SmallFireball.class);
 		}
 		
@@ -124,7 +124,7 @@ public abstract class Abilities {
 			return DisguiseType.CREEPER;
 		}
 		
-		public void handleRightClick(Player player, ItemStack item) {
+		public void handleInteract(Player player, ItemStack item) {
 			if(player.isSneaking() && player.getLocation().getPitch() == 90.0F) {
 				player.getWorld().createExplosion(player.getLocation(), 1.0F);
 			}
@@ -168,7 +168,7 @@ public abstract class Abilities {
 			return DisguiseType.GHAST;
 		}
 		
-		public void handleRightClick(Player player, ItemStack item) {
+		public void handleInteract(Player player, ItemStack item) {
 			if(item != null && item.getType().equals(Material.STICK)) {
 				player.launchProjectile(LargeFireball.class);
 			}

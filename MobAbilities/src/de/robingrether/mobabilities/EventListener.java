@@ -80,7 +80,7 @@ public class EventListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		if(plugin.playerAbilities.containsKey(player)) {
-			plugin.playerAbilities.get(player).handleRightClick(player, event.getItem());
+			plugin.playerAbilities.get(player).handleInteract(player, event.getItem());
 		}
 	}
 	
