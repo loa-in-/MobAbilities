@@ -28,7 +28,7 @@ public class EventListener implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
 		if(plugin.playerAbilities.containsKey(player)) {
-			plugin.playerAbilities.remove(player);
+			plugin.playerAbilities.remove(player).removePotionEffects(player);
 			plugin.disguiseApi.undisguise(player, false);
 		}
 	}
