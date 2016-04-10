@@ -1,5 +1,13 @@
 package de.robingrether.mobabilities;
 
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,14 +25,38 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import de.robingrether.idisguise.disguise.DisguiseType;
+import de.robingrether.util.Validate;
 
 public abstract class Abilities {
+	
+	private static final Map<String, Abilities> fromName = new ConcurrentHashMap<String, Abilities>();
+	
+	public static Abilities fromName(String name) {
+		Validate.notNull(name);
+		return fromName.get(name.toLowerCase(Locale.ENGLISH));
+	}
+	
+	public static String listAbilities() {
+		List<String> abilities = new ArrayList<String>(fromName.keySet());
+		abilities.sort(Collator.getInstance());
+		Iterator<String> iterator = abilities.iterator();
+		StringBuilder builder = new StringBuilder(iterator.next());
+		while(iterator.hasNext()) {
+			builder.append(", ");
+			builder.append(iterator.next());
+		}
+		return builder.toString();
+	}
+	
+	private String name;
 	
 	public boolean allowTargetByEntity(EntityType entityType) { return true; }
 	
 	public void applyPotionEffects(Player player) {}
 	
 	public abstract DisguiseType getDisguiseType();
+	
+	public final String name() { return name; }
 	
 	public void handleBowShoot(Player player, ItemStack bow) {}
 	
@@ -37,6 +69,8 @@ public abstract class Abilities {
 	public void handleRightClickedByPlayer(Player player, Player other) {}
 	
 	public void handleTeleport(Player player, TeleportCause cause) {}
+	
+	public final Abilities register(String name) { fromName.put(this.name = name, this); return this; }
 	
 	public void removePotionEffects(Player player) {}
 	
@@ -62,7 +96,7 @@ public abstract class Abilities {
 			player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
 		}
 		
-	};
+	}.register("blaze");
 	
 	public static final Abilities CHICKEN = new Abilities() {
 		
@@ -78,7 +112,7 @@ public abstract class Abilities {
 			return movement;
 		}
 		
-	};
+	}.register("chicken");
 	
 	public static final Abilities CREEPER = new Abilities() {
 		
@@ -96,7 +130,7 @@ public abstract class Abilities {
 			}
 		}
 		
-	};
+	}.register("creeper");
 	
 	public static final Abilities ENDERMAN = new Abilities() {
 		
@@ -120,7 +154,7 @@ public abstract class Abilities {
 			}
 		}
 		
-	};
+	}.register("enderman");
 	
 	public static final Abilities GHAST = new Abilities() {
 		
@@ -146,7 +180,7 @@ public abstract class Abilities {
 			player.setAllowFlight(false);
 		}
 		
-	};
+	}.register("ghast");
 	
 	public static final Abilities HORSE = new Abilities() {
 		
@@ -168,7 +202,7 @@ public abstract class Abilities {
 			player.removePotionEffect(PotionEffectType.SPEED);
 		}
 		
-	};
+	}.register("horse");
 	
 	public static final Abilities PIG_ZOMBIE = new Abilities() {
 		
@@ -188,7 +222,7 @@ public abstract class Abilities {
 			player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
 		}
 		
-	};
+	}.register("pig_zombie");
 	
 	public static final Abilities SKELETON = new Abilities() {
 		
@@ -208,7 +242,7 @@ public abstract class Abilities {
 			}
 		}
 		
-	};
+	}.register("skeleton");
 	
 	public static final Abilities SPIDER = new Abilities() {
 		
@@ -279,7 +313,7 @@ public abstract class Abilities {
 			
 		}
 		
-	};
+	}.register("spider");
 	
 	public static final Abilities SQUID = new Abilities() {
 		
@@ -297,6 +331,6 @@ public abstract class Abilities {
 			player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 		}
 		
-	};
+	}.register("squid");
 	
 }

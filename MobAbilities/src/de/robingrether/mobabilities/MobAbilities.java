@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.robingrether.idisguise.api.DisguiseAPI;
+import de.robingrether.util.StringUtil;
 
 public class MobAbilities extends JavaPlugin {
 	
@@ -39,7 +40,7 @@ public class MobAbilities extends JavaPlugin {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player player = null;
-		if(cmd.getName().equalsIgnoreCase("ma")) {
+		if(StringUtil.equalsIgnoreCase(cmd.getName(), "mobabilities", "ma")) {
 			if(sender instanceof Player) {
 				player = (Player)sender;
 			} else {
@@ -47,48 +48,21 @@ public class MobAbilities extends JavaPlugin {
 			}
 			Abilities oldAbilities = playerAbilities.get(player), newAbilities = null;
 			String argument = args.length > 0 ? args[0].toLowerCase(Locale.ENGLISH) : "";
-			switch(argument) {
-				case "blaze":
-					newAbilities = Abilities.BLAZE;
-					break;
-				case "chicken":
-					newAbilities = Abilities.CHICKEN;
-					break;
-				case "creeper":
-					newAbilities = Abilities.CREEPER;
-					break;
-				case "enderman":
-					newAbilities = Abilities.ENDERMAN;
-					break;
-				case "ghast":
-					newAbilities = Abilities.GHAST;
-					break;
-				case "horse":
-					newAbilities = Abilities.HORSE;
-					break;
-				case "pig_zombie":
-					newAbilities = Abilities.PIG_ZOMBIE;
-					break;
-				case "skeleton":
-					newAbilities = Abilities.SKELETON;
-					break;
-				case "spider":
-					newAbilities = Abilities.SPIDER;
-					break;
-				case "squid":
-					newAbilities = Abilities.SQUID;
-					break;
-				case "remove":
-					newAbilities = null;
-					break;
-				case "state":
-					//TODO
-				default:
-					sender.sendMessage(ChatColor.GREEN + getFullName() + " - Help");
-					sender.sendMessage(ChatColor.GOLD + " /ma <type> - Apply new abilities");
-					sender.sendMessage(ChatColor.GOLD + " /ma remove - Remove your abilities");
-					sender.sendMessage(ChatColor.GRAY + " Types: blaze, chicken, creeper, enderman, ghast, horse, pig_zombie, skeleton, spider, squid");
-					return true;
+			if(argument.equalsIgnoreCase("remove")) {
+			} else if(argument.equalsIgnoreCase("state")) {
+				if(playerAbilities.containsKey(player)) {
+					sender.sendMessage(ChatColor.GOLD + "Your abilities: " + playerAbilities.get(player).name());
+				} else {
+					sender.sendMessage(ChatColor.GOLD + "No abilities applied.");
+				}
+				return true;
+			} else if((newAbilities = Abilities.fromName(argument)) == null) {
+				sender.sendMessage(ChatColor.GREEN + getFullName() + " - Help");
+				sender.sendMessage(ChatColor.GOLD + " /" + cmd.getName() + " <type> - Apply new abilities");
+				sender.sendMessage(ChatColor.GOLD + " /" + cmd.getName() + " remove - Remove your abilities");
+				sender.sendMessage(ChatColor.GOLD + " /" + cmd.getName() + " state - Check your applied abilities");
+				sender.sendMessage(ChatColor.GRAY + " Types: " + Abilities.listAbilities());
+				return true;
 			}
 			if(newAbilities == null) {
 				if(oldAbilities == null) {
