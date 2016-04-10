@@ -1,6 +1,6 @@
 name: MobAbilities
 main: de.robingrether.mobabilities.MobAbilities
-version: 0.1
+version: 0.1.1
 author: RobinGrether
 depend: [iDisguise]
 commands:
