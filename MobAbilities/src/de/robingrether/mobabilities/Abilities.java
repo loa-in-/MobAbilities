@@ -89,7 +89,9 @@ public abstract class Abilities {
 		}
 		
 		public void handleInteract(Player player, ItemStack item) {
-			player.launchProjectile(SmallFireball.class);
+			if(item != null && item.getType().equals(Material.STICK)) {
+				player.launchProjectile(SmallFireball.class);
+			}
 		}
 		
 		public void removePotionEffects(Player player) {
@@ -125,7 +127,7 @@ public abstract class Abilities {
 		}
 		
 		public void handleInteract(Player player, ItemStack item) {
-			if(player.isSneaking() && player.getLocation().getPitch() == 90.0F) {
+			if(item != null && item.getType().equals(Material.SULPHUR) && player.isSneaking()) {
 				player.getWorld().createExplosion(player.getLocation(), 1.0F);
 			}
 		}
