@@ -1,5 +1,6 @@
 package de.robingrether.mobabilities;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -11,11 +12,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import de.robingrether.idisguise.api.PlayerInteractDisguisedPlayerEvent;
+import de.robingrether.mobabilities.io.Configuration;
+import de.robingrether.mobabilities.io.UpdateCheck;
 
 public class EventListener implements Listener {
 	
@@ -23,6 +27,14 @@ public class EventListener implements Listener {
 	
 	public EventListener(MobAbilities plugin) {
 		this.plugin = plugin;
+	}
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		if(player.hasPermission("MobAbilities.update") && plugin.configuration.getBoolean(Configuration.CHECK_FOR_UPDATES)) {
+			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new UpdateCheck(plugin, player, ChatColor.GOLD + "An update for MobAbilities is available: " + ChatColor.ITALIC + "%s"), 20L);
+		}
 	}
 	
 	@EventHandler

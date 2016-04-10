@@ -1,5 +1,6 @@
 package de.robingrether.mobabilities;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,16 +16,25 @@ import de.robingrether.idisguise.api.DisguiseAPI;
 import de.robingrether.idisguise.io.Metrics;
 import de.robingrether.idisguise.io.Metrics.Graph;
 import de.robingrether.idisguise.io.Metrics.Plotter;
+import de.robingrether.mobabilities.io.Configuration;
+import de.robingrether.mobabilities.io.UpdateCheck;
 import de.robingrether.util.StringUtil;
 
 public class MobAbilities extends JavaPlugin {
 	
+	public static final File directory = new File("plugins/MobAbilities");
+	
 	Map<Player, Abilities> playerAbilities = new ConcurrentHashMap<Player, Abilities>();
 	EventListener listener;
 	DisguiseAPI disguiseApi;
+	Configuration configuration;
 	private Metrics metrics;
 	
 	public void onEnable() {
+		checkDirectory();
+		configuration = new Configuration(this, directory);
+		configuration.loadData();
+		configuration.saveData();
 		listener = new EventListener(this);
 		getServer().getPluginManager().registerEvents(listener, this);
 		disguiseApi = getServer().getServicesManager().getRegistration(DisguiseAPI.class).getProvider();
@@ -51,6 +61,9 @@ public class MobAbilities extends JavaPlugin {
 			}
 			
 		}, 600L, 600L);
+		if(configuration.getBoolean(Configuration.CHECK_FOR_UPDATES)) {
+			getServer().getScheduler().runTaskLaterAsynchronously(this, new UpdateCheck(this, getServer().getConsoleSender(), ChatColor.GOLD + "[MobAbilities] An update for MobAbilities is available: " + ChatColor.ITALIC + "%s"), 20L);
+		}
 		getLogger().log(Level.INFO, String.format("%s enabled!", getFullName()));
 	}
 	
@@ -117,6 +130,12 @@ public class MobAbilities extends JavaPlugin {
 			}
 		}
 		return true;
+	}
+	
+	private void checkDirectory() {
+		if(!directory.exists()) {
+			directory.mkdir();
+		}
 	}
 	
 	public String getVersion() {
