@@ -3,8 +3,12 @@ main: de.robingrether.mobabilities.MobAbilities
 version: 0.1.1
 author: RobinGrether
 depend: [iDisguise]
+website: http://dev.bukkit.org/bukkit-plugins/mobabilities/
 commands:
    mobabilities:
       description: Get abilities of different mobs.
    ma:
       description: Get abilities of different mobs.
+permissions:
+   MobAbilities.update:
+      default: op
