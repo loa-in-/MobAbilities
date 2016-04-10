@@ -47,7 +47,7 @@ public abstract class Abilities {
 		}
 		
 		public void applyPotionEffects(Player player) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -125,7 +125,7 @@ public abstract class Abilities {
 	public static final Abilities GHAST = new Abilities() {
 		
 		public void applyPotionEffects(Player player) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 			player.setAllowFlight(true);
 			player.setFlying(true);
 		}
@@ -152,7 +152,7 @@ public abstract class Abilities {
 		
 		public void applyPotionEffects(Player player) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 3));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 2));
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -177,7 +177,7 @@ public abstract class Abilities {
 		}
 		
 		public void applyPotionEffects(Player player) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0));
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -284,8 +284,8 @@ public abstract class Abilities {
 	public static final Abilities SQUID = new Abilities() {
 		
 		public void applyPotionEffects(Player player) {
-			player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 1));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 0));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0));
 		}
 		
 		public DisguiseType getDisguiseType() {
