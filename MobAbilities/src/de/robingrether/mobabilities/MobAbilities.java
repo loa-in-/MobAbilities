@@ -85,6 +85,7 @@ public class MobAbilities extends JavaPlugin {
 				player = (Player)sender;
 			} else {
 				sender.sendMessage(ChatColor.RED + "You cannot use this command.");
+				return true;
 			}
 			Abilities oldAbilities = playerAbilities.get(player), newAbilities = null;
 			String argument = args.length > 0 ? args[0].toLowerCase(Locale.ENGLISH) : "";
