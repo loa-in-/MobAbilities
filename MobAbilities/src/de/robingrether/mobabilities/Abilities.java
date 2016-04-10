@@ -267,7 +267,8 @@ public abstract class Abilities {
 		}
 		
 		public void handleBowShoot(final Player player, ItemStack bow) {
-			if(!bow.containsEnchantment(Enchantment.ARROW_INFINITE)) {
+			if(bow != null && !bow.containsEnchantment(Enchantment.ARROW_INFINITE)) {
+				
 				Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new Runnable() {
 					
 					public void run() {
