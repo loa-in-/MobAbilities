@@ -148,15 +148,21 @@ public abstract class Abilities {
 			return DisguiseType.ENDERMAN;
 		}
 		
-		public void handleTeleport(Player player, TeleportCause cause) {
+		public void handleTeleport(final Player player, TeleportCause cause) {
 			if(cause.equals(TeleportCause.ENDER_PEARL)) {
-				if(player.getInventory().contains(Material.ENDER_PEARL)) {
-					ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ENDER_PEARL));
-					itemStack.setAmount(itemStack.getAmount() + 1);
-				} else {
-					player.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
-				}
-				player.updateInventory();
+				Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new Runnable() {
+					
+					public void run() {
+						if(player.getInventory().contains(Material.ENDER_PEARL)) {
+							ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ENDER_PEARL));
+							itemStack.setAmount(itemStack.getAmount() + 1);
+						} else {
+							player.getInventory().addItem(new ItemStack(Material.ENDER_PEARL, 1));
+						}
+						player.updateInventory();
+					}
+					
+				}, 10L);
 			}
 		}
 		
@@ -251,15 +257,21 @@ public abstract class Abilities {
 			return DisguiseType.SKELETON;
 		}
 		
-		public void handleBowShoot(Player player, ItemStack bow) {
+		public void handleBowShoot(final Player player, ItemStack bow) {
 			if(!bow.containsEnchantment(Enchantment.ARROW_INFINITE)) {
-				if(player.getInventory().contains(Material.ARROW)) {
-					ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ARROW));
-					itemStack.setAmount(itemStack.getAmount() + 1);
-				} else {
-					player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
-				}
-				player.updateInventory();
+				Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new Runnable() {
+					
+					public void run() {
+						if(player.getInventory().contains(Material.ARROW)) {
+							ItemStack itemStack = player.getInventory().getItem(player.getInventory().first(Material.ARROW));
+							itemStack.setAmount(itemStack.getAmount() + 1);
+						} else {
+							player.getInventory().addItem(new ItemStack(Material.ARROW, 1));
+						}
+						player.updateInventory();
+					}
+					
+				}, 10L);
 			}
 		}
 		
@@ -271,7 +283,7 @@ public abstract class Abilities {
 			return DisguiseType.SPIDER;
 		}
 		
-		public Vector handleMove(Player player, Vector movement) {	
+		public Vector handleMove(Player player, Vector movement) {
 			Block block = player.getLocation().getBlock();
 			if(block.isEmpty()) {
 				Block blockDown = block.getRelative(BlockFace.DOWN);
