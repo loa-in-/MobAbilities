@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -58,7 +59,7 @@ public class EventListener implements Listener {
 		if(!event.isCancelled() && event.getEntityType().equals(EntityType.PLAYER)) {
 			Player player = (Player)event.getEntity();
 			if(plugin.playerAbilities.containsKey(player)) {
-				event.setDamage(plugin.playerAbilities.get(player).handleDamage(player, event.getDamage(), event.getCause()));
+				event.setDamage(event instanceof EntityDamageByEntityEvent ? plugin.playerAbilities.get(player).handleDamage(player, event.getDamage(), event.getCause(), ((EntityDamageByEntityEvent)event).getDamager()) : plugin.playerAbilities.get(player).handleDamage(player, event.getDamage(), event.getCause(), null));
 			}
 		}
 	}

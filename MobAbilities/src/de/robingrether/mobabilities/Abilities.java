@@ -13,6 +13,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EnderPearl;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
@@ -62,7 +64,7 @@ public abstract class Abilities {
 	
 	public void handleBowShoot(Player player, ItemStack bow) {}
 	
-	public double handleDamage(Player player, double damage, DamageCause cause) { return damage; }
+	public double handleDamage(Player player, double damage, DamageCause cause, Entity damager) { return damage; }
 	
 	public Vector handleMove(Player player, Vector movement) { return movement; }
 	
@@ -146,6 +148,13 @@ public abstract class Abilities {
 		
 		public DisguiseType getDisguiseType() {
 			return DisguiseType.ENDERMAN;
+		}
+		
+		public double handleDamage(Player player, double damage, DamageCause cause, Entity damager) {
+			if(damager instanceof EnderPearl) {
+				return 0.0;
+			}
+			return damage;
 		}
 		
 		public void handleTeleport(final Player player, TeleportCause cause) {
