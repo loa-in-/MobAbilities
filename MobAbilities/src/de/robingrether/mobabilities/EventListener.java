@@ -35,7 +35,7 @@ public class EventListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onEntityTarget(EntityTargetEvent event) {
-		if(!event.isCancelled() && event.getTarget().getType().equals(EntityType.PLAYER)) {
+		if(!event.isCancelled() && event.getTarget() != null && event.getTarget().getType().equals(EntityType.PLAYER)) {
 			Player target = (Player)event.getTarget();
 			if(plugin.playerAbilities.containsKey(target)) {
 				event.setCancelled(!plugin.playerAbilities.get(target).allowTargetByEntity(event.getEntityType()));
