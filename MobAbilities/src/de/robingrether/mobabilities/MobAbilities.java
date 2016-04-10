@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.robingrether.idisguise.api.DisguiseAPI;
+import de.robingrether.idisguise.io.Metrics;
+import de.robingrether.idisguise.io.Metrics.Graph;
+import de.robingrether.idisguise.io.Metrics.Plotter;
 import de.robingrether.util.StringUtil;
 
 public class MobAbilities extends JavaPlugin {
@@ -19,12 +22,26 @@ public class MobAbilities extends JavaPlugin {
 	Map<Player, Abilities> playerAbilities = new ConcurrentHashMap<Player, Abilities>();
 	EventListener listener;
 	DisguiseAPI disguiseApi;
+	private Metrics metrics;
 	
 	public void onEnable() {
 		listener = new EventListener(this);
 		getServer().getPluginManager().registerEvents(listener, this);
 		disguiseApi = getServer().getServicesManager().getRegistration(DisguiseAPI.class).getProvider();
 		getLogger().log(Level.INFO, "Linked with iDisguise.");
+		try {
+			metrics = new Metrics(this);
+			Graph graphAbilitiesCount = metrics.createGraph("Applied Abilities");
+			graphAbilitiesCount.addPlotter(new Plotter("Applied Abilities") {
+				
+				public int getValue() {
+					return playerAbilities.size();
+				}
+				
+			});
+			metrics.start();
+		} catch(Exception e) {
+		}
 		getServer().getScheduler().runTaskTimer(this, new Runnable() {
 			
 			public void run() {
