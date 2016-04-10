@@ -186,7 +186,7 @@ public abstract class Abilities {
 		
 		public void applyPotionEffects(Player player) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 3));
-			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 2));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1));
 		}
 		
 		public DisguiseType getDisguiseType() {
