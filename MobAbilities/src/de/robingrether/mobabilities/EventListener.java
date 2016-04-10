@@ -17,7 +17,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import de.robingrether.idisguise.api.DisguiseEvent;
 import de.robingrether.idisguise.api.PlayerInteractDisguisedPlayerEvent;
+import de.robingrether.idisguise.api.UndisguiseEvent;
 import de.robingrether.mobabilities.io.Configuration;
 import de.robingrether.mobabilities.io.UpdateCheck;
 
@@ -43,6 +45,22 @@ public class EventListener implements Listener {
 		if(plugin.playerAbilities.containsKey(player)) {
 			plugin.playerAbilities.remove(player).remove(player);
 			plugin.disguiseApi.undisguise(player, false);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onDisguise(DisguiseEvent event) {
+		Player player = event.getPlayer();
+		if(plugin.playerAbilities.containsKey(player)) {
+			event.setCancelled(true);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void onUndisguise(UndisguiseEvent event) {
+		Player player = event.getPlayer();
+		if(plugin.playerAbilities.containsKey(player)) {
+			event.setCancelled(true);
 		}
 	}
 	
