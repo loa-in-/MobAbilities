@@ -23,6 +23,7 @@ import de.robingrether.util.StringUtil;
 public class MobAbilities extends JavaPlugin {
 	
 	public static final File directory = new File("plugins/MobAbilities");
+	public static MobAbilities instance;
 	
 	Map<Player, Abilities> playerAbilities = new ConcurrentHashMap<Player, Abilities>();
 	EventListener listener;
@@ -31,6 +32,7 @@ public class MobAbilities extends JavaPlugin {
 	private Metrics metrics;
 	
 	public void onEnable() {
+		instance = this;
 		checkDirectory();
 		configuration = new Configuration(this, directory);
 		configuration.loadData();
