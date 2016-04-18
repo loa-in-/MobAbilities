@@ -24,9 +24,11 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import de.robingrether.idisguise.disguise.DisguiseType;
+import de.robingrether.util.ObjectUtil;
 import de.robingrether.util.Validate;
 
 public abstract class Abilities {
@@ -146,6 +148,16 @@ public abstract class Abilities {
 			return !entityType.equals(EntityType.ENDERMAN);
 		}
 		
+		public void apply(Player player) {
+			if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
+				if(!damageRunnables.containsKey(player)) {
+					DamageRunnable runnable = new DamageRunnable(player);
+					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+					damageRunnables.put(player, new DamageRunnable(player));
+				}
+			}
+		}
+		
 		public DisguiseType getDisguiseType() {
 			return DisguiseType.ENDERMAN;
 		}
@@ -155,6 +167,43 @@ public abstract class Abilities {
 				return 0.0;
 			}
 			return damage;
+		}
+		
+		public Vector handleMove(Player player, Vector movement) {
+			if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
+				if(!damageRunnables.containsKey(player)) {
+					DamageRunnable runnable = new DamageRunnable(player);
+					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+					damageRunnables.put(player, new DamageRunnable(player));
+				}
+			}
+			return movement;
+		}
+		
+		private Map<Player, DamageRunnable> damageRunnables = new ConcurrentHashMap<Player, DamageRunnable>();
+		
+		class DamageRunnable extends BukkitRunnable {
+			
+			private Player player;
+			
+			private DamageRunnable(Player player) {
+				this.player = player;
+			}
+			
+			public void run() {
+				if(!Abilities.ENDERMAN.equals(MobAbilities.instance.playerAbilities.get(player))) {
+					damageRunnables.remove(player);
+					cancel();
+					return;
+				}
+				if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
+					damageRunnables.remove(player);
+					cancel();
+					return;
+				}
+				player.damage(1.0);
+			}
+			
 		}
 		
 		public void handleTeleport(final Player player, TeleportCause cause) {
