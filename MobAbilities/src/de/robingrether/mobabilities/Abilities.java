@@ -2,6 +2,7 @@ package de.robingrether.mobabilities;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -347,39 +348,45 @@ public abstract class Abilities {
 			if(block.isEmpty()) {
 				Block blockDown = block.getRelative(BlockFace.DOWN);
 				Block blockUp = block.getRelative(BlockFace.UP);
-				boolean sentUpdate = false;
-				if(blockDown.isEmpty()) {
-					if(block.getRelative(BlockFace.NORTH).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0001);
-						sentUpdate = true;
-					} else if(block.getRelative(BlockFace.EAST).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0010);
-						sentUpdate = true;
-					} else if(block.getRelative(BlockFace.SOUTH).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0100);
-						sentUpdate = true;
-					} else if(block.getRelative(BlockFace.WEST).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b1000);
-						sentUpdate = true;
-					}
-				} else if(blockUp.isEmpty()) {
-					if(block.getRelative(BlockFace.NORTH).getType().isSolid() && blockUp.getRelative(BlockFace.NORTH).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0001);
-						sentUpdate = true;
-					} else if(block.getRelative(BlockFace.EAST).getType().isSolid() && blockUp.getRelative(BlockFace.EAST).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0010);
-						sentUpdate = true;
-					} else if(block.getRelative(BlockFace.SOUTH).getType().isSolid() && blockUp.getRelative(BlockFace.SOUTH).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b0100);
-						sentUpdate = true;
-					} else if(block.getRelative(BlockFace.WEST).getType().isSolid() && blockUp.getRelative(BlockFace.WEST).getType().isSolid()) {
-						player.sendBlockChange(block.getLocation(), Material.VINE, (byte)0b1000);
-						sentUpdate = true;
+				List<BlockFace> blockFaces = new ArrayList<BlockFace>(Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST));
+				for(int i = 0; i < blockFaces.size(); i++) {
+					if(!block.getRelative(blockFaces.get(i)).getType().isSolid()) {
+						blockFaces.remove(i);
+						i--;
 					}
 				}
-				if(sentUpdate) {
+				for(int i = 0; i < blockFaces.size(); i++) {
+					if(!(blockUp.getRelative(blockFaces.get(i)).getType().isSolid() || (blockDown.getRelative(blockFaces.get(i)).getType().isSolid() && blockDown.isEmpty()))) {
+						blockFaces.remove(i);
+						i--;
+					}
+				}
+				if(!blockFaces.isEmpty()) {
+					byte blockData;
+					switch(blockFaces.get(0)) {
+						case NORTH:
+							blockData = (byte)0b0001;
+							break;
+						case EAST:
+							blockData = (byte)0b0010;
+							break;
+						case SOUTH:
+							blockData = (byte)0b0100;
+							break;
+						case WEST:
+							blockData = (byte)0b1000;
+							break;
+						default:
+							blockData = (byte)0;
+							break;
+					}
+					player.sendBlockChange(block.getLocation(), Material.VINE, blockData);
+					Bukkit.getScheduler().runTaskLater(MobAbilities.instance, new BlockUpdate(player, block), 20L);
+					if(blockUp.isEmpty()) {
+						player.sendBlockChange(blockUp.getLocation(), Material.VINE, blockData);
+						Bukkit.getScheduler().runTaskLater(MobAbilities.instance, new BlockUpdate(player, blockUp), 20L);
+					}
 					player.setFallDistance(0.0F);
-					Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new BlockUpdate(player, block), 20L);
 				}
 			}
 			return movement;
