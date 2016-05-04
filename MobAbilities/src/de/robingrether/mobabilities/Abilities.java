@@ -136,7 +136,7 @@ public abstract class Abilities {
 		}
 		
 		public void handleInteract(Player player, ItemStack item) {
-			if(item != null && item.getType().equals(Material.SULPHUR) && player.isSneaking()) {
+			if(item != null && item.getType().equals(Material.STICK) && player.isSneaking()) {
 				player.getWorld().createExplosion(player.getLocation(), 1.0F);
 			}
 		}
