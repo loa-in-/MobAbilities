@@ -1,12 +1,17 @@
 package de.robingrether.mobabilities.io;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,19 +33,23 @@ public class UpdateCheck implements Runnable {
 	private String pluginVersion;
 	private String latestVersion;
 	private CommandSender toBeNotified;
-	private String notification;
+	private String downloadUrl;
+	private boolean autoDownload;
 	
-	public UpdateCheck(MobAbilities plugin, CommandSender toBeNotified, String notification) {
+	public UpdateCheck(MobAbilities plugin, CommandSender toBeNotified, boolean autoDownload) {
 		this.plugin = plugin;
 		this.pluginVersion = plugin.getFullName();
 		this.toBeNotified = toBeNotified;
-		this.notification = notification;
+		this.autoDownload = autoDownload;
 	}
 	
 	public void run() {
 		checkForUpdate();
 		if(isUpdateAvailable()) {
-			toBeNotified.sendMessage(String.format(notification, latestVersion));
+			toBeNotified.sendMessage(ChatColor.GOLD + "[MobAbilities] An update is available: " + latestVersion);
+			if(autoDownload) {
+				downloadUpdate();
+			}
 		}
 	}
 	
@@ -53,7 +62,6 @@ public class UpdateCheck implements Runnable {
 			} catch(NumberFormatException e) {
 			} catch(ArrayIndexOutOfBoundsException e) {
 			}
-			return true;
 		}
 		return false;
 	}
@@ -71,6 +79,7 @@ public class UpdateCheck implements Runnable {
 			latestVersion = null;
 			JSONObject object = (JSONObject)array.get(array.size() - 1);
 			latestVersion = (String)object.get(API_NAME);
+			downloadUrl = (String)object.get(API_DOWNLOAD_URL);
 		} catch(Exception e) {
 			plugin.getLogger().log(Level.WARNING, "Update checking failed: " + e.getClass().getSimpleName());
 		} finally {
@@ -78,6 +87,51 @@ public class UpdateCheck implements Runnable {
 				try {
 					reader.close();
 				} catch(IOException e) {
+				}
+			}
+		}
+	}
+	
+	private void downloadUpdate() {
+		File oldFile = plugin.getPluginFile();
+		File newFile = new File(plugin.getServer().getUpdateFolderFile(), oldFile.getName());
+		if(newFile.exists()) {
+			toBeNotified.sendMessage(ChatColor.GOLD + "[MobAbilities] Update already downloaded. (Restart server to apply update)");
+		} else {
+			InputStream input = null;
+			OutputStream output = null;
+			try {
+				toBeNotified.sendMessage(ChatColor.GOLD + "[MobAbilities] Downloading update...");
+				URL url = new URL(downloadUrl);
+				URLConnection connection = url.openConnection();
+				connection.addRequestProperty("User-Agent", pluginVersion.replace(' ', '/') + " (by RobinGrether)");
+				connection.setDoOutput(true);
+				input = connection.getInputStream();
+				plugin.getServer().getUpdateFolderFile().mkdir();
+				output = new FileOutputStream(newFile);
+				int fetched;
+				byte[] data = new byte[4096];
+				while((fetched = input.read(data)) > 0) {
+					output.write(data, 0, fetched);
+				}
+				input.close();
+				output.close();
+				toBeNotified.sendMessage(ChatColor.GOLD + "[MobAbilities] Download succeeded. (Restart server to apply update)");
+			} catch(IOException e) {
+				toBeNotified.sendMessage(ChatColor.RED + "[MobAbilities] Download failed.");
+				plugin.getLogger().log(Level.WARNING, "Update download failed: " + e.getClass().getSimpleName());
+			} finally {
+				if(input != null) {
+					try {
+						input.close();
+					} catch(IOException e) {
+					}
+				}
+				if(output != null) {
+					try {
+						output.close();
+					} catch(IOException e) {
+					}
 				}
 			}
 		}

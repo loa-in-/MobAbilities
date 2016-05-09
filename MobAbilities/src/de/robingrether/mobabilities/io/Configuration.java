@@ -20,6 +20,7 @@ import de.robingrether.util.StringUtil;
 public class Configuration {
 	
 	public static final String CHECK_FOR_UPDATES = "check-for-updates";
+	public static final String AUTO_DOWNLOAD_UPDATES = "auto-download-updates";
 	
 	private Map<String, Setting> settings = new ConcurrentHashMap<String, Setting>();
 	private MobAbilities plugin;
@@ -29,6 +30,7 @@ public class Configuration {
 		this.plugin = plugin;
 		configurationFile = new File(directory, "config.txt");
 		setDefault(CHECK_FOR_UPDATES, true, "Enable this if you want the plugin to check for an update when the server starts.\nIf an update is available a message will be printed out into console,\nand every player who has the 'MobAbilities.update' permission will receive a message.");
+		setDefault(AUTO_DOWNLOAD_UPDATES, false, "If this option is enabled, an available update is automatically downloaded from dev.bukkit.org.\nThis option is useless if 'check-for-updates' is disabled.");
 	}
 	
 	public void loadData() {

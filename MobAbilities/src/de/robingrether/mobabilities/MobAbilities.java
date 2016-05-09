@@ -64,7 +64,7 @@ public class MobAbilities extends JavaPlugin {
 			
 		}, 600L, 600L);
 		if(configuration.getBoolean(Configuration.CHECK_FOR_UPDATES)) {
-			getServer().getScheduler().runTaskLaterAsynchronously(this, new UpdateCheck(this, getServer().getConsoleSender(), ChatColor.GOLD + "[MobAbilities] An update for MobAbilities is available: " + ChatColor.ITALIC + "%s"), 20L);
+			getServer().getScheduler().runTaskLaterAsynchronously(this, new UpdateCheck(this, getServer().getConsoleSender(), configuration.getBoolean(Configuration.AUTO_DOWNLOAD_UPDATES)), 20L);
 		}
 		getLogger().log(Level.INFO, String.format("%s enabled!", getFullName()));
 	}
@@ -147,6 +147,10 @@ public class MobAbilities extends JavaPlugin {
 	
 	public String getFullName() {
 		return "MobAbilities " + getVersion();
+	}
+	
+	public File getPluginFile() {
+		return getFile();
 	}
 	
 }
