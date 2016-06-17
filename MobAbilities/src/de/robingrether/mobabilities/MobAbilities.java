@@ -21,7 +21,6 @@ import de.robingrether.mobabilities.io.UpdateCheck;
 
 public class MobAbilities extends JavaPlugin {
 	
-	public static final File directory = new File("plugins/MobAbilities");
 	public static MobAbilities instance;
 	
 	Map<Player, Abilities> playerAbilities = new ConcurrentHashMap<Player, Abilities>();
@@ -33,7 +32,7 @@ public class MobAbilities extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		checkDirectory();
-		configuration = new Configuration(this, directory);
+		configuration = new Configuration(this, getDataFolder());
 		configuration.loadData();
 		configuration.saveData();
 		listener = new EventListener(this);
@@ -137,8 +136,8 @@ public class MobAbilities extends JavaPlugin {
 	}
 	
 	private void checkDirectory() {
-		if(!directory.exists()) {
-			directory.mkdir();
+		if(!getDataFolder().exists()) {
+			getDataFolder().mkdir();
 		}
 	}
 	
