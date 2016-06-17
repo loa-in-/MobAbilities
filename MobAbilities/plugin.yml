@@ -7,8 +7,7 @@ website: http://dev.bukkit.org/bukkit-plugins/mobabilities/
 commands:
    mobabilities:
       description: Get abilities of different mobs.
-   ma:
-      description: Get abilities of different mobs.
+      aliases: [abilities]
 permissions:
    MobAbilities.update:
       default: op

@@ -18,7 +18,6 @@ import de.robingrether.idisguise.io.Metrics.Graph;
 import de.robingrether.idisguise.io.Metrics.Plotter;
 import de.robingrether.mobabilities.io.Configuration;
 import de.robingrether.mobabilities.io.UpdateCheck;
-import de.robingrether.util.StringUtil;
 
 public class MobAbilities extends JavaPlugin {
 	
@@ -80,9 +79,9 @@ public class MobAbilities extends JavaPlugin {
 		getLogger().log(Level.INFO, String.format("%s disabled!", getFullName()));
 	}
 	
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 		Player player = null;
-		if(StringUtil.equalsIgnoreCase(cmd.getName(), "mobabilities", "ma")) {
+		if(command.getName().equalsIgnoreCase("mobabilities")) {
 			if(sender instanceof Player) {
 				player = (Player)sender;
 			} else {
@@ -101,9 +100,9 @@ public class MobAbilities extends JavaPlugin {
 				return true;
 			} else if((newAbilities = Abilities.fromName(argument)) == null) {
 				sender.sendMessage(ChatColor.GREEN + getFullName() + " - Help");
-				sender.sendMessage(ChatColor.GOLD + " /" + cmd.getName() + " <type> - Apply new abilities");
-				sender.sendMessage(ChatColor.GOLD + " /" + cmd.getName() + " remove - Remove your abilities");
-				sender.sendMessage(ChatColor.GOLD + " /" + cmd.getName() + " state - Check your applied abilities");
+				sender.sendMessage(ChatColor.GOLD + " /" + alias + " <type> - Apply new abilities");
+				sender.sendMessage(ChatColor.GOLD + " /" + alias + " remove - Remove your abilities");
+				sender.sendMessage(ChatColor.GOLD + " /" + alias + " state - Check your applied abilities");
 				sender.sendMessage(ChatColor.GRAY + " Types: " + Abilities.listAbilities());
 				return true;
 			}
