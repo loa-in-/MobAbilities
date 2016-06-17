@@ -20,6 +20,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.WitherSkull;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -436,5 +437,31 @@ public abstract class Abilities {
 		}
 		
 	}.register("squid");
+	
+	public static final Abilities WITHER = new Abilities() {
+		
+		public void apply(Player player) {
+			player.setAllowFlight(true);
+			player.setFlying(true);
+			applyPotionEffects(player);
+		}
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.WITHER;
+		}
+		
+		public void handleInteract(Player player, ItemStack item) {
+			if(item != null && item.getType().equals(Material.STICK)) {
+				player.launchProjectile(WitherSkull.class);
+			}
+		}
+		
+		public void remove(Player player) {
+			player.setFlying(false);
+			player.setAllowFlight(false);
+			removePotionEffects(player);
+		}
+		
+	}.register("witherboss");
 	
 }

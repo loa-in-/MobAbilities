@@ -23,6 +23,7 @@ permissions:
          MobAbilities.skeleton: true
          MobAbilities.spider: true
          MobAbilities.squid: true
+         MobAbilities.witherboss: true
    MobAbilities.update:
       default: false
    MobAbilities.blaze:
@@ -44,4 +45,6 @@ permissions:
    MobAbilities.spider:
       default: false
    MobAbilities.squid:
+      default: false
+   MobAbilities.witherboss:
       default: false
