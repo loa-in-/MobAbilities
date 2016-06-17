@@ -77,6 +77,8 @@ public abstract class Abilities {
 	
 	public void handleTeleport(Player player, TeleportCause cause) {}
 	
+	public boolean hasPermission(Player player) { return player.hasPermission("MobAbilities." + name); }
+	
 	public final Abilities register(String name) { fromName.put(this.name = name, this); return this; }
 	
 	public void remove(Player player) { removePotionEffects(player); }

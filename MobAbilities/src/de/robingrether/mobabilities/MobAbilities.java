@@ -118,6 +118,8 @@ public class MobAbilities extends JavaPlugin {
 			} else {
 				if(oldAbilities != null && oldAbilities.equals(newAbilities)) {
 					sender.sendMessage(ChatColor.RED + "Already applied.");
+				} else if(!newAbilities.hasPermission(player)) {
+					sender.sendMessage(ChatColor.RED + "You are not allowed to do this.");
 				} else {
 					if(oldAbilities != null) {
 						playerAbilities.remove(player);

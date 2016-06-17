@@ -9,5 +9,39 @@ commands:
       description: Get abilities of different mobs.
       aliases: [abilities]
 permissions:
-   MobAbilities.update:
+   MobAbilities.*:
       default: op
+      children:
+         MobAbilities.update: true
+         MobAbilities.blaze: true
+         MobAbilities.chicken: true
+         MobAbilities.creeper: true
+         MobAbilities.enderman: true
+         MobAbilities.ghast: true
+         MobAbilities.horse: true
+         MobAbilities.pig_zombie: true
+         MobAbilities.skeleton: true
+         MobAbilities.spider: true
+         MobAbilities.squid: true
+   MobAbilities.update:
+      default: false
+   MobAbilities.blaze:
+      default: false
+   MobAbilities.chicken:
+      default: false
+   MobAbilities.creeper:
+      default: false
+   MobAbilities.enderman:
+      default: false
+   MobAbilities.ghast:
+      default: false
+   MobAbilities.horse:
+      default: false
+   MobAbilities.pig_zombie:
+      default: false
+   MobAbilities.skeleton:
+      default: false
+   MobAbilities.spider:
+      default: false
+   MobAbilities.squid:
+      default: false
