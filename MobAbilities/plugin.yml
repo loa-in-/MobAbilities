@@ -16,6 +16,7 @@ permissions:
          MobAbilities.blaze: true
          MobAbilities.chicken: true
          MobAbilities.creeper: true
+         MobAbilities.ender_dragon: true
          MobAbilities.enderman: true
          MobAbilities.ghast: true
          MobAbilities.horse: true
@@ -31,6 +32,8 @@ permissions:
    MobAbilities.chicken:
       default: false
    MobAbilities.creeper:
+      default: false
+   MobAbilities.ender_dragon:
       default: false
    MobAbilities.enderman:
       default: false

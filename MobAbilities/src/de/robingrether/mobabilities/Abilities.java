@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -145,6 +146,41 @@ public abstract class Abilities {
 		}
 		
 	}.register("creeper");
+	
+	public static final Abilities ENDER_DRAGON = new Abilities() {
+		
+		public void apply(Player player) {
+			player.setAllowFlight(true);
+			player.setFlying(true);
+			applyPotionEffects(player);
+		}
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.ENDER_DRAGON;
+		}
+		
+		public Vector handleMove(Player player, Vector movement) {
+			Location base = player.getLocation().subtract(3, 1, 3);
+			for(int x = 0; x < 7; x++) {
+				for(int y = 0; y < 3; y++) {
+					for(int z = 0; z < 7; z++) {
+						Block block = base.add(x, y, z).getBlock();
+						if(!block.isEmpty() && !ObjectUtil.equals(block.getType(), Material.BEDROCK, Material.ENDER_STONE, Material.OBSIDIAN)) {
+							block.setType(Material.AIR);
+						}
+					}
+				}
+			}
+			return movement;
+		}
+		
+		public void remove(Player player) {
+			player.setFlying(false);
+			player.setAllowFlight(false);
+			removePotionEffects(player);
+		}
+		
+	}.register("ender_dragon");
 	
 	public static final Abilities ENDERMAN = new Abilities() {
 		
