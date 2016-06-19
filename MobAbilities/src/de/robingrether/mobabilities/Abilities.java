@@ -162,10 +162,10 @@ public abstract class Abilities {
 		public Vector handleMove(Player player, Vector movement) {
 			Location base = player.getLocation().subtract(3, 1, 3);
 			for(int x = 0; x < 7; x++) {
-				for(int y = 0; y < 3; y++) {
+				for(int y = 0; y < 4; y++) {
 					for(int z = 0; z < 7; z++) {
-						Block block = base.add(x, y, z).getBlock();
-						if(!block.isEmpty() && !ObjectUtil.equals(block.getType(), Material.BEDROCK, Material.ENDER_STONE, Material.OBSIDIAN)) {
+						Block block = base.clone().add(x, y, z).getBlock();
+						if(!ObjectUtil.equals(block.getType(), Material.AIR, Material.BEDROCK, Material.ENDER_STONE, Material.OBSIDIAN)) {
 							block.setType(Material.AIR);
 						}
 					}
