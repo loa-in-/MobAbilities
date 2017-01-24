@@ -19,7 +19,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import de.robingrether.idisguise.api.DisguiseEvent;
 import de.robingrether.idisguise.api.PlayerInteractDisguisedPlayerEvent;
 import de.robingrether.idisguise.api.UndisguiseEvent;
-import de.robingrether.mobabilities.io.Configuration;
 import de.robingrether.mobabilities.io.UpdateCheck;
 
 public class EventListener implements Listener {
@@ -33,8 +32,8 @@ public class EventListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		if(player.hasPermission("MobAbilities.update") && plugin.configuration.getBoolean(Configuration.CHECK_FOR_UPDATES)) {
-			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new UpdateCheck(plugin, player, plugin.configuration.getBoolean(Configuration.AUTO_DOWNLOAD_UPDATES)), 20L);
+		if(player.hasPermission("MobAbilities.update") && plugin.configuration.UPDATE_CHECK) {
+			plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new UpdateCheck(plugin, player, plugin.configuration.UPDATE_DOWNLOAD), 20L);
 		}
 	}
 	

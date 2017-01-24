@@ -1,0 +1,9 @@
+# Settings affecting the update checking feature
+updates:
+   
+   # Check whether an update is available at every server start
+   # Admins might get 'MobAbilities.update' permission to also trigger an update check and receive a notification if an update is available
+   check: UPDATE_CHECK
+   
+   # Automatically download a new update after checking whether one is available
+   download: UPDATE_DOWNLOAD

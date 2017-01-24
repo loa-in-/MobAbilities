@@ -32,7 +32,7 @@ public class MobAbilities extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		checkDirectory();
-		configuration = new Configuration(this, getDataFolder());
+		configuration = new Configuration(this);
 		configuration.loadData();
 		configuration.saveData();
 		listener = new EventListener(this);
@@ -61,8 +61,8 @@ public class MobAbilities extends JavaPlugin {
 			}
 			
 		}, 600L, 600L);
-		if(configuration.getBoolean(Configuration.CHECK_FOR_UPDATES)) {
-			getServer().getScheduler().runTaskLaterAsynchronously(this, new UpdateCheck(this, getServer().getConsoleSender(), configuration.getBoolean(Configuration.AUTO_DOWNLOAD_UPDATES)), 20L);
+		if(configuration.UPDATE_CHECK) {
+			getServer().getScheduler().runTaskLaterAsynchronously(this, new UpdateCheck(this, getServer().getConsoleSender(), configuration.UPDATE_DOWNLOAD), 20L);
 		}
 		getLogger().log(Level.INFO, String.format("%s enabled!", getFullName()));
 	}
