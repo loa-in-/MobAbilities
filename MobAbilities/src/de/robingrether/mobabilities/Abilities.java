@@ -31,6 +31,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import de.robingrether.idisguise.disguise.DisguiseType;
+import de.robingrether.idisguise.management.VersionHelper;
 import de.robingrether.util.ObjectUtil;
 import de.robingrether.util.Validate;
 
@@ -316,9 +317,7 @@ public abstract class Abilities {
 		}
 		
 		public void remove(Player player) {
-			if(player.getPassenger() instanceof Player) {
-				player.getPassenger().eject();
-			}
+			player.eject();
 			removePotionEffects(player);
 		}
 		
