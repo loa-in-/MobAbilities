@@ -1,8 +1,10 @@
 package de.robingrether.mobabilities;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -13,9 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.robingrether.idisguise.api.DisguiseAPI;
-import de.robingrether.idisguise.io.Metrics;
-import de.robingrether.idisguise.io.Metrics.Graph;
-import de.robingrether.idisguise.io.Metrics.Plotter;
+import de.robingrether.idisguise.io.bstats.Metrics;
 import de.robingrether.mobabilities.io.Configuration;
 import de.robingrether.mobabilities.io.UpdateCheck;
 
@@ -39,19 +39,24 @@ public class MobAbilities extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(listener, this);
 		disguiseApi = getServer().getServicesManager().getRegistration(DisguiseAPI.class).getProvider();
 		getLogger().log(Level.INFO, "Linked with iDisguise.");
-		try {
-			metrics = new Metrics(this);
-			Graph graphAbilitiesCount = metrics.createGraph("Applied Abilities");
-			graphAbilitiesCount.addPlotter(new Plotter("Applied Abilities") {
-				
-				public int getValue() {
-					return playerAbilities.size();
+		metrics = new Metrics(this);
+		metrics.addCustomChart(new Metrics.SingleLineChart("appliedAbilities") {
+			
+			public int getValue() {
+				return playerAbilities.size();
+			}
+			
+		});
+		metrics.addCustomChart(new Metrics.AdvancedPie("abilityTypes") {
+			
+			public HashMap<String, Integer> getValues(HashMap<String, Integer> valueMap) {
+				for(Entry<Player, Abilities> entry : playerAbilities.entrySet()) {
+					valueMap.put(entry.getValue().name(), valueMap.containsKey(entry.getValue().name()) ? valueMap.get(entry.getValue().name()) + 1 : 1);
 				}
-				
-			});
-			metrics.start();
-		} catch(Exception e) {
-		}
+				return valueMap;
+			}
+			
+		});
 		getServer().getScheduler().runTaskTimer(this, new Runnable() {
 			
 			public void run() {
