@@ -15,6 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -68,7 +69,7 @@ public abstract class Abilities {
 	
 	public final String name() { return name; }
 	
-	public void handleBowShoot(Player player, ItemStack bow) {}
+	public void handleBowShoot(Player player, ItemStack bow, Entity projectile) {}
 	
 	public double handleDamage(Player player, double damage, DamageCause cause, Entity damager) { return damage; }
 	
@@ -186,7 +187,7 @@ public abstract class Abilities {
 	public static final Abilities ENDERMAN = new Abilities() {
 		
 		public boolean allowTargetByEntity(EntityType entityType) {
-			return !entityType.equals(EntityType.ENDERMAN);
+			return !ObjectUtil.equals(entityType, EntityType.ENDERMAN, EntityType.ENDERMITE, EntityType.ENDER_DRAGON);
 		}
 		
 		public void apply(Player player) {
@@ -269,6 +270,10 @@ public abstract class Abilities {
 	
 	public static final Abilities GHAST = new Abilities() {
 		
+		public boolean allowTargetByEntity(EntityType entityType) {
+			return !entityType.equals(EntityType.GHAST);
+		}
+		
 		public void apply(Player player) {
 			player.setAllowFlight(true);
 			player.setFlying(true);
@@ -331,7 +336,7 @@ public abstract class Abilities {
 	public static final Abilities PIG_ZOMBIE = new Abilities() {
 		
 		public boolean allowTargetByEntity(EntityType entityType) {
-			return !entityType.equals(EntityType.PIG_ZOMBIE);
+			return !ObjectUtil.equals(entityType, EntityType.PIG_ZOMBIE, EntityType.WITHER);
 		}
 		
 		public void applyPotionEffects(Player player) {
@@ -350,13 +355,19 @@ public abstract class Abilities {
 	
 	public static final Abilities SKELETON = new Abilities() {
 		
+		public boolean allowTargetByEntity(EntityType entityType) {
+			return VersionHelper.require1_11() ? !ObjectUtil.equals(entityType, EntityType.SKELETON, EntityType.WITHER, EntityType.WITHER_SKELETON) : !ObjectUtil.equals(entityType, EntityType.SKELETON, EntityType.WITHER);
+		}
+		
 		public DisguiseType getDisguiseType() {
 			return DisguiseType.SKELETON;
 		}
 		
-		public void handleBowShoot(final Player player, ItemStack bow) {
-			if(bow != null && !bow.containsEnchantment(Enchantment.ARROW_INFINITE)) {
-				
+		public void handleBowShoot(final Player player, ItemStack bow, Entity projectile) {
+			if(bow != null && !bow.containsEnchantment(Enchantment.ARROW_INFINITE) && projectile.getType().equals(EntityType.ARROW)) {
+				if(VersionHelper.require1_11()) {
+					((Arrow)projectile).setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+				}
 				Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("MobAbilities"), new Runnable() {
 					
 					public void run() {
@@ -376,6 +387,10 @@ public abstract class Abilities {
 	}.register("skeleton");
 	
 	public static final Abilities SPIDER = new Abilities() {
+		
+		public boolean allowTargetByEntity(EntityType entityType) {
+			return !ObjectUtil.equals(entityType, EntityType.CAVE_SPIDER, EntityType.SPIDER);
+		}
 		
 		public DisguiseType getDisguiseType() {
 			return DisguiseType.SPIDER;
@@ -457,6 +472,17 @@ public abstract class Abilities {
 	
 	public static final Abilities SQUID = new Abilities() {
 		
+		public void apply(Player player) {
+			if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
+				if(!damageRunnables.containsKey(player)) {
+					DamageRunnable runnable = new DamageRunnable(player);
+					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+					damageRunnables.put(player, new DamageRunnable(player));
+				}
+			}
+			applyPotionEffects(player);
+		}
+		
 		public void applyPotionEffects(Player player) {
 			player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 0));
 			player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0));
@@ -464,6 +490,43 @@ public abstract class Abilities {
 		
 		public DisguiseType getDisguiseType() {
 			return DisguiseType.SQUID;
+		}
+		
+		public Vector handleMove(Player player, Vector movement) {
+			if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
+				if(!damageRunnables.containsKey(player)) {
+					DamageRunnable runnable = new DamageRunnable(player);
+					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+					damageRunnables.put(player, new DamageRunnable(player));
+				}
+			}
+			return movement;
+		}
+		
+		private Map<Player, DamageRunnable> damageRunnables = new ConcurrentHashMap<Player, DamageRunnable>();
+		
+		class DamageRunnable extends BukkitRunnable {
+			
+			private Player player;
+			
+			private DamageRunnable(Player player) {
+				this.player = player;
+			}
+			
+			public void run() {
+				if(!Abilities.SQUID.equals(MobAbilities.instance.playerAbilities.get(player))) {
+					damageRunnables.remove(player);
+					cancel();
+					return;
+				}
+				if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
+					damageRunnables.remove(player);
+					cancel();
+					return;
+				}
+				player.damage(1.0);
+			}
+			
 		}
 		
 		public void removePotionEffects(Player player) {

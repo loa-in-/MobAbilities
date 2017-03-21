@@ -77,7 +77,7 @@ public class EventListener implements Listener {
 		if(!event.isCancelled() && event.getEntityType().equals(EntityType.PLAYER)) {
 			Player player = (Player)event.getEntity();
 			if(plugin.playerAbilities.containsKey(player)) {
-				plugin.playerAbilities.get(player).handleBowShoot(player, event.getBow());
+				plugin.playerAbilities.get(player).handleBowShoot(player, event.getBow(), event.getProjectile());
 			}
 		}
 	}
