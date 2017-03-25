@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import org.bstats.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.robingrether.idisguise.api.DisguiseAPI;
-import de.robingrether.idisguise.io.bstats.Metrics;
 import de.robingrether.mobabilities.io.Configuration;
 import de.robingrether.mobabilities.io.UpdateCheck;
 
