@@ -1,7 +1,9 @@
 package de.robingrether.mobabilities;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.robingrether.idisguise.api.DisguiseAPI;
 import de.robingrether.mobabilities.io.Configuration;
 import de.robingrether.mobabilities.io.UpdateCheck;
+import de.robingrether.util.StringUtil;
 
 public class MobAbilities extends JavaPlugin {
 	
@@ -138,6 +141,30 @@ public class MobAbilities extends JavaPlugin {
 			}
 		}
 		return true;
+	}
+	
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+		List<String> completions = new ArrayList<String>();
+		if(command.getName().equalsIgnoreCase("mobabilities")) {
+			if(sender instanceof Player) {
+				if(args.length < 2) {
+					completions.add("state");
+					if(playerAbilities.containsKey(sender)) {
+						completions.add("remove");
+					}
+					completions.addAll(Abilities.values());
+				}
+			}
+		}
+		if(args.length > 0) {
+			for(int i = 0; i < completions.size(); i++) {
+				if(!StringUtil.startsWithIgnoreCase(completions.get(i), args[args.length - 1])) {
+					completions.remove(i);
+					i--;
+				}
+			}
+		}
+		return completions;
 	}
 	
 	private void checkDirectory() {

@@ -45,10 +45,14 @@ public abstract class Abilities {
 		return fromName.get(name.toLowerCase(Locale.ENGLISH));
 	}
 	
-	public static String listAbilities() {
+	public static List<String> values() {
 		List<String> abilities = new ArrayList<String>(fromName.keySet());
-		abilities.sort(Collator.getInstance());
-		Iterator<String> iterator = abilities.iterator();
+		abilities.sort(Collator.getInstance(Locale.ENGLISH));
+		return abilities;
+	}
+	
+	public static String listAbilities() {
+		Iterator<String> iterator = values().iterator();
 		StringBuilder builder = new StringBuilder(iterator.next());
 		while(iterator.hasNext()) {
 			builder.append(", ");
@@ -525,7 +529,7 @@ public abstract class Abilities {
 			removePotionEffects(player);
 		}
 		
-	}.register("witherboss");
+	}.register("wither");
 	
 	public static final Abilities ZOMBIE = new Abilities() {
 		
