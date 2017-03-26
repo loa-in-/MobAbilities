@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -304,7 +305,11 @@ public abstract class Abilities {
 		}
 		
 		public void handleRightClickedByPlayer(Player player, Player other) {
-			player.setPassenger(other);
+			if(VersionHelper.require1_9())
+				other.sendMessage(ChatColor.RED + "Riding is disabled due to bugs...");
+			else
+				player.setPassenger(other);
+			
 		}
 		
 		public void remove(Player player) {
