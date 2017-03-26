@@ -191,13 +191,9 @@ public abstract class Abilities {
 		}
 		
 		public void apply(Player player) {
-			if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
-				if(!damageRunnables.containsKey(player)) {
-					DamageRunnable runnable = new DamageRunnable(player);
-					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
-					damageRunnables.put(player, new DamageRunnable(player));
-				}
-			}
+			DamageRunnable runnable = new DamageRunnable(player);
+			runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+			damageRunnables.put(player, runnable);
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -211,15 +207,9 @@ public abstract class Abilities {
 			return damage;
 		}
 		
-		public Vector handleMove(Player player, Vector movement) {
-			if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
-				if(!damageRunnables.containsKey(player)) {
-					DamageRunnable runnable = new DamageRunnable(player);
-					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
-					damageRunnables.put(player, new DamageRunnable(player));
-				}
-			}
-			return movement;
+		public void remove(Player player) {
+			DamageRunnable runnable = damageRunnables.remove(player);
+			runnable.cancel();
 		}
 		
 		private Map<Player, DamageRunnable> damageRunnables = new ConcurrentHashMap<Player, DamageRunnable>();
@@ -233,17 +223,9 @@ public abstract class Abilities {
 			}
 			
 			public void run() {
-				if(!Abilities.ENDERMAN.equals(MobAbilities.instance.playerAbilities.get(player))) {
-					damageRunnables.remove(player);
-					cancel();
-					return;
+				if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
+					player.damage(1.0);
 				}
-				if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
-					damageRunnables.remove(player);
-					cancel();
-					return;
-				}
-				player.damage(1.0);
 			}
 			
 		}
@@ -473,13 +455,9 @@ public abstract class Abilities {
 	public static final Abilities SQUID = new Abilities() {
 		
 		public void apply(Player player) {
-			if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
-				if(!damageRunnables.containsKey(player)) {
-					DamageRunnable runnable = new DamageRunnable(player);
-					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
-					damageRunnables.put(player, new DamageRunnable(player));
-				}
-			}
+			DamageRunnable runnable = new DamageRunnable(player);
+			runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+			damageRunnables.put(player, runnable);
 			applyPotionEffects(player);
 		}
 		
@@ -492,15 +470,10 @@ public abstract class Abilities {
 			return DisguiseType.SQUID;
 		}
 		
-		public Vector handleMove(Player player, Vector movement) {
-			if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
-				if(!damageRunnables.containsKey(player)) {
-					DamageRunnable runnable = new DamageRunnable(player);
-					runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
-					damageRunnables.put(player, new DamageRunnable(player));
-				}
-			}
-			return movement;
+		public void remove(Player player) {
+			DamageRunnable runnable = damageRunnables.remove(player);
+			runnable.cancel();
+			removePotionEffects(player);
 		}
 		
 		private Map<Player, DamageRunnable> damageRunnables = new ConcurrentHashMap<Player, DamageRunnable>();
@@ -514,17 +487,9 @@ public abstract class Abilities {
 			}
 			
 			public void run() {
-				if(!Abilities.SQUID.equals(MobAbilities.instance.playerAbilities.get(player))) {
-					damageRunnables.remove(player);
-					cancel();
-					return;
+				if(!(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER))) {
+					player.damage(1.0);
 				}
-				if(ObjectUtil.equals(player.getLocation().getBlock().getType(), Material.WATER, Material.STATIONARY_WATER) || ObjectUtil.equals(player.getLocation().getBlock().getRelative(BlockFace.UP).getType(), Material.WATER, Material.STATIONARY_WATER)) {
-					damageRunnables.remove(player);
-					cancel();
-					return;
-				}
-				player.damage(1.0);
 			}
 			
 		}
@@ -561,5 +526,58 @@ public abstract class Abilities {
 		}
 		
 	}.register("witherboss");
+	
+	public static final Abilities ZOMBIE = new Abilities() {
+		
+		public boolean allowTargetByEntity(EntityType entityType) {
+			return VersionHelper.require1_11() ? !ObjectUtil.equals(entityType, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER) : !ObjectUtil.equals(entityType, EntityType.ZOMBIE);
+		}
+		
+		public void apply(Player player) {
+			FireTickRunnable runnable = new FireTickRunnable(player);
+			runnable.runTaskTimer(MobAbilities.instance, 10L, 10L);
+			fireTickRunnables.put(player, runnable);
+			applyPotionEffects(player);
+		}
+		
+		public void applyPotionEffects(Player player) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, Integer.MAX_VALUE, 0));
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Integer.MAX_VALUE, 0));
+		}
+		
+		public DisguiseType getDisguiseType() {
+			return DisguiseType.ZOMBIE;
+		}
+		
+		public void remove(Player player) {
+			FireTickRunnable runnable = fireTickRunnables.remove(player);
+			runnable.cancel();
+			removePotionEffects(player);
+		}
+		
+		public void removePotionEffects(Player player) {
+			player.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+			player.removePotionEffect(PotionEffectType.SATURATION);
+		}
+		
+		private Map<Player, FireTickRunnable> fireTickRunnables = new ConcurrentHashMap<Player, FireTickRunnable>();
+		
+		class FireTickRunnable extends BukkitRunnable {
+			
+			private Player player;
+			
+			private FireTickRunnable(Player player) {
+				this.player = player;
+			}
+			
+			public void run() {
+				if(player.getWorld().getHighestBlockYAt(player.getLocation()) <= player.getLocation().getY() && player.getWorld().getFullTime() < 12000 && !player.getWorld().hasStorm()) {
+					player.setFireTicks(40);
+				}
+			}
+			
+		}
+		
+	}.register("zombie");
 	
 }
