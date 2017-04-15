@@ -1,6 +1,7 @@
 package de.robingrether.mobabilities;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +11,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -110,6 +112,15 @@ public class EventListener implements Listener {
 		Player player = event.getPlayer();
 		if(plugin.playerAbilities.containsKey(player)) {
 			plugin.playerAbilities.get(player).handleInteract(player, event.getItem());
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+		Player player = event.getPlayer();
+		Entity entity = event.getRightClicked();
+		if(plugin.playerAbilities.containsKey(player)) {
+			plugin.playerAbilities.get(player).handleInteractEntity(player, entity);
 		}
 	}
 	

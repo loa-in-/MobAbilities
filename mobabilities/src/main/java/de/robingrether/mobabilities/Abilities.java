@@ -82,6 +82,8 @@ public abstract class Abilities {
 	
 	public void handleInteract(Player player, ItemStack item) {}
 	
+	public void handleInteractEntity(Player player, Entity entity) {}
+	
 	public void handleRightClickedByPlayer(Player player, Player other) {}
 	
 	public void handleTeleport(Player player, TeleportCause cause) {}
@@ -351,7 +353,20 @@ public abstract class Abilities {
 	public static final Abilities SKELETON = new Abilities() {
 		
 		public boolean allowTargetByEntity(EntityType entityType) {
-			return VersionHelper.require1_11() ? !ObjectUtil.equals(entityType, EntityType.SKELETON, EntityType.WITHER, EntityType.WITHER_SKELETON) : !ObjectUtil.equals(entityType, EntityType.SKELETON, EntityType.WITHER);
+			return VersionHelper.require1_11() ? !ObjectUtil.equals(entityType, EntityType.CAVE_SPIDER, EntityType.SKELETON, EntityType.SPIDER, EntityType.WITHER, EntityType.WITHER_SKELETON) : !ObjectUtil.equals(entityType, EntityType.CAVE_SPIDER, EntityType.SKELETON, EntityType.SPIDER, EntityType.WITHER);
+		}
+		
+		public void apply(Player player) {
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				FireTickRunnable runnable = new FireTickRunnable(player);
+				runnable.runTaskTimer(MobAbilities.instance, 10L, 10L);
+				fireTickRunnables.put(player, runnable);
+			}
+			applyPotionEffects(player);
+		}
+		
+		public void applyPotionEffects(Player player) {
+			player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, Integer.MAX_VALUE, 0));
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -377,6 +392,44 @@ public abstract class Abilities {
 					
 				}, 10L);
 			}
+		}
+		
+		public void handleInteractEntity(Player player, Entity entity) {
+			if(ObjectUtil.equals(entity.getType(), EntityType.CAVE_SPIDER, EntityType.SPIDER)) {
+				if(!player.isInsideVehicle() && player.getLocation().distance(entity.getLocation()) < 5.0) {
+					entity.setPassenger(player);
+				}
+			}
+		}
+		
+		public void remove(Player player) {
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				FireTickRunnable runnable = fireTickRunnables.remove(player);
+				runnable.cancel();
+			}
+			removePotionEffects(player);
+		}
+		
+		public void removePotionEffects(Player player) {
+			player.removePotionEffect(PotionEffectType.SATURATION);
+		}
+		
+		private Map<Player, FireTickRunnable> fireTickRunnables = new ConcurrentHashMap<Player, FireTickRunnable>();
+		
+		class FireTickRunnable extends BukkitRunnable {
+			
+			private Player player;
+			
+			private FireTickRunnable(Player player) {
+				this.player = player;
+			}
+			
+			public void run() {
+				if(player.getWorld().getHighestBlockYAt(player.getLocation()) <= player.getLocation().getY() && player.getWorld().getFullTime() < 12000 && !player.getWorld().hasStorm()) {
+					player.setFireTicks(40);
+				}
+			}
+			
 		}
 		
 	}.register("skeleton");
