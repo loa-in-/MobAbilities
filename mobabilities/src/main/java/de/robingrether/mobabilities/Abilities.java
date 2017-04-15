@@ -196,9 +196,11 @@ public abstract class Abilities {
 		}
 		
 		public void apply(Player player) {
-			DamageRunnable runnable = new DamageRunnable(player);
-			runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
-			damageRunnables.put(player, runnable);
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				DamageRunnable runnable = new DamageRunnable(player);
+				runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+				damageRunnables.put(player, runnable);
+			}
 		}
 		
 		public DisguiseType getDisguiseType() {
@@ -213,8 +215,10 @@ public abstract class Abilities {
 		}
 		
 		public void remove(Player player) {
-			DamageRunnable runnable = damageRunnables.remove(player);
-			runnable.cancel();
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				DamageRunnable runnable = damageRunnables.remove(player);
+				runnable.cancel();
+			}
 		}
 		
 		private Map<Player, DamageRunnable> damageRunnables = new ConcurrentHashMap<Player, DamageRunnable>();
@@ -464,9 +468,11 @@ public abstract class Abilities {
 	public static final Abilities SQUID = new Abilities() {
 		
 		public void apply(Player player) {
-			DamageRunnable runnable = new DamageRunnable(player);
-			runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
-			damageRunnables.put(player, runnable);
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				DamageRunnable runnable = new DamageRunnable(player);
+				runnable.runTaskTimer(MobAbilities.instance, 5L, 5L);
+				damageRunnables.put(player, runnable);
+			}
 			applyPotionEffects(player);
 		}
 		
@@ -480,8 +486,10 @@ public abstract class Abilities {
 		}
 		
 		public void remove(Player player) {
-			DamageRunnable runnable = damageRunnables.remove(player);
-			runnable.cancel();
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				DamageRunnable runnable = damageRunnables.remove(player);
+				runnable.cancel();
+			}
 			removePotionEffects(player);
 		}
 		
@@ -543,9 +551,11 @@ public abstract class Abilities {
 		}
 		
 		public void apply(Player player) {
-			FireTickRunnable runnable = new FireTickRunnable(player);
-			runnable.runTaskTimer(MobAbilities.instance, 10L, 10L);
-			fireTickRunnables.put(player, runnable);
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				FireTickRunnable runnable = new FireTickRunnable(player);
+				runnable.runTaskTimer(MobAbilities.instance, 10L, 10L);
+				fireTickRunnables.put(player, runnable);
+			}
 			applyPotionEffects(player);
 		}
 		
@@ -559,8 +569,10 @@ public abstract class Abilities {
 		}
 		
 		public void remove(Player player) {
-			FireTickRunnable runnable = fireTickRunnables.remove(player);
-			runnable.cancel();
+			if(MobAbilities.instance.configuration.ENABLE_DISABILITIES) {
+				FireTickRunnable runnable = fireTickRunnables.remove(player);
+				runnable.cancel();
+			}
 			removePotionEffects(player);
 		}
 		

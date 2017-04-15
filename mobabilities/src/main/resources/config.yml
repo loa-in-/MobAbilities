@@ -1,3 +1,10 @@
+# Settings affecting the behavior of this plugin
+abilities:
+   
+   # Are disabilities enabled
+   # e.g. as an enderman you get damage when touching water
+   enable-disabilities: ENABLE_DISABILITIES
+
 # Settings affecting the update checking feature
 updates:
    

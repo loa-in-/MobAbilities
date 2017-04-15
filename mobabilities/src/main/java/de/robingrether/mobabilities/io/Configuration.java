@@ -15,9 +15,11 @@ import de.robingrether.util.StringUtil;
 public class Configuration {
 	
 	/* Configuration options start here */
+	public static final String ENABLE_DISABILITIES_PATH = "abilities.enable-disabilities";
 	public static final String UPDATE_CHECK_PATH = "updates.check";
 	public static final String UPDATE_DOWNLOAD_PATH = "updates.download";
 	
+	public boolean ENABLE_DISABILITIES = true;
 	public boolean UPDATE_CHECK = true;
 	public boolean UPDATE_DOWNLOAD = false;
 	/* Configuration options end here */
